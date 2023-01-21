@@ -1,5 +1,5 @@
 syntax = "proto2";
-option go_package = "douyin.core";
+option go_package = "api.base";
 package douyin.core;
 
 message douyin_feed_request {

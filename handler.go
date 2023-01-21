@@ -17,6 +17,7 @@ func (s *BaseApiServiceImpl) UserRegister(ctx context.Context, req *tiktokbacken
 // UserLogin implements the BaseApiServiceImpl interface.
 func (s *BaseApiServiceImpl) UserLogin(ctx context.Context, req *tiktokbackendbase.UserLoginRequest) (resp *tiktokbackendbase.UserLoginResponse, err error) {
 	// TODO: Your code here...
+
 	return
 }
 
