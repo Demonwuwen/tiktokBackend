@@ -7,7 +7,7 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	tiktokBackendBase "github.com/demonwuwen/tiktokBackend/biz/model/tiktokBackendBase"
+	tiktokBackendBase "tiktokBackendBase"
 )
 
 // UserRegister .
@@ -90,9 +90,9 @@ func PublishList(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// DeleteNote .
+// Feed .
 // @router /douyin/feed [DELETE]
-func DeleteNote(ctx context.Context, c *app.RequestContext) {
+func Feed(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req tiktokBackendBase.FeedRequest
 	err = c.BindAndValidate(&req)

@@ -16,7 +16,7 @@ func _douyinMw() []app.HandlerFunc {
 	return nil
 }
 
-func _deletenoteMw() []app.HandlerFunc {
+func _feedMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

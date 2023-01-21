@@ -4,7 +4,7 @@ package TiktokBackendBase
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	tiktokBackendBase "github.com/demonwuwen/tiktokBackend/biz/handler/tiktokBackendBase"
+	tiktokBackendBase "tiktokBackend/biz/handler/tiktokBackendBase"
 )
 
 /*
@@ -19,7 +19,7 @@ func Register(r *server.Hertz) {
 	root := r.Group("/", rootMw()...)
 	{
 		_douyin := root.Group("/douyin", _douyinMw()...)
-		_douyin.DELETE("/feed", append(_deletenoteMw(), tiktokBackendBase.DeleteNote)...)
+		_douyin.DELETE("/feed", append(_feedMw(), tiktokBackendBase.Feed)...)
 		_douyin.POST("/user", append(_usergetMw(), tiktokBackendBase.UserGet)...)
 		{
 			_publish := _douyin.Group("/publish", _publishMw()...)

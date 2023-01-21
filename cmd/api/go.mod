@@ -1,4 +1,4 @@
-module github.com/demonwuwen/tiktokBackend
+module tiktokBackend
 
 go 1.19
 

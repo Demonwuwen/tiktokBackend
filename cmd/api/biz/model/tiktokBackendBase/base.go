@@ -3832,7 +3832,7 @@ type BaseApiService interface {
 
 	PublishList(ctx context.Context, req *PublishListRequest) (r *PublishListResponse, err error)
 
-	DeleteNote(ctx context.Context, req *FeedRequest) (r *FeedResponse, err error)
+	Feed(ctx context.Context, req *FeedRequest) (r *FeedResponse, err error)
 }
 
 type BaseApiServiceClient struct {
@@ -3906,11 +3906,11 @@ func (p *BaseApiServiceClient) PublishList(ctx context.Context, req *PublishList
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *BaseApiServiceClient) DeleteNote(ctx context.Context, req *FeedRequest) (r *FeedResponse, err error) {
-	var _args BaseApiServiceDeleteNoteArgs
+func (p *BaseApiServiceClient) Feed(ctx context.Context, req *FeedRequest) (r *FeedResponse, err error) {
+	var _args BaseApiServiceFeedArgs
 	_args.Req = req
-	var _result BaseApiServiceDeleteNoteResult
-	if err = p.Client_().Call(ctx, "DeleteNote", &_args, &_result); err != nil {
+	var _result BaseApiServiceFeedResult
+	if err = p.Client_().Call(ctx, "Feed", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
@@ -3941,7 +3941,7 @@ func NewBaseApiServiceProcessor(handler BaseApiService) *BaseApiServiceProcessor
 	self.AddToProcessorMap("UserGet", &baseApiServiceProcessorUserGet{handler: handler})
 	self.AddToProcessorMap("PublishVideo", &baseApiServiceProcessorPublishVideo{handler: handler})
 	self.AddToProcessorMap("PublishList", &baseApiServiceProcessorPublishList{handler: handler})
-	self.AddToProcessorMap("DeleteNote", &baseApiServiceProcessorDeleteNote{handler: handler})
+	self.AddToProcessorMap("Feed", &baseApiServiceProcessorFeed{handler: handler})
 	return self
 }
 func (p *BaseApiServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -4202,16 +4202,16 @@ func (p *baseApiServiceProcessorPublishList) Process(ctx context.Context, seqId 
 	return true, err
 }
 
-type baseApiServiceProcessorDeleteNote struct {
+type baseApiServiceProcessorFeed struct {
 	handler BaseApiService
 }
 
-func (p *baseApiServiceProcessorDeleteNote) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := BaseApiServiceDeleteNoteArgs{}
+func (p *baseApiServiceProcessorFeed) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := BaseApiServiceFeedArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("DeleteNote", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("Feed", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -4220,11 +4220,11 @@ func (p *baseApiServiceProcessorDeleteNote) Process(ctx context.Context, seqId i
 
 	iprot.ReadMessageEnd()
 	var err2 error
-	result := BaseApiServiceDeleteNoteResult{}
+	result := BaseApiServiceFeedResult{}
 	var retval *FeedResponse
-	if retval, err2 = p.handler.DeleteNote(ctx, args.Req); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing DeleteNote: "+err2.Error())
-		oprot.WriteMessageBegin("DeleteNote", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.Feed(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing Feed: "+err2.Error())
+		oprot.WriteMessageBegin("Feed", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -4232,7 +4232,7 @@ func (p *baseApiServiceProcessorDeleteNote) Process(ctx context.Context, seqId i
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("DeleteNote", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("Feed", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -5710,32 +5710,32 @@ func (p *BaseApiServicePublishListResult) String() string {
 	return fmt.Sprintf("BaseApiServicePublishListResult(%+v)", *p)
 }
 
-type BaseApiServiceDeleteNoteArgs struct {
+type BaseApiServiceFeedArgs struct {
 	Req *FeedRequest `thrift:"req,1"`
 }
 
-func NewBaseApiServiceDeleteNoteArgs() *BaseApiServiceDeleteNoteArgs {
-	return &BaseApiServiceDeleteNoteArgs{}
+func NewBaseApiServiceFeedArgs() *BaseApiServiceFeedArgs {
+	return &BaseApiServiceFeedArgs{}
 }
 
-var BaseApiServiceDeleteNoteArgs_Req_DEFAULT *FeedRequest
+var BaseApiServiceFeedArgs_Req_DEFAULT *FeedRequest
 
-func (p *BaseApiServiceDeleteNoteArgs) GetReq() (v *FeedRequest) {
+func (p *BaseApiServiceFeedArgs) GetReq() (v *FeedRequest) {
 	if !p.IsSetReq() {
-		return BaseApiServiceDeleteNoteArgs_Req_DEFAULT
+		return BaseApiServiceFeedArgs_Req_DEFAULT
 	}
 	return p.Req
 }
 
-var fieldIDToName_BaseApiServiceDeleteNoteArgs = map[int16]string{
+var fieldIDToName_BaseApiServiceFeedArgs = map[int16]string{
 	1: "req",
 }
 
-func (p *BaseApiServiceDeleteNoteArgs) IsSetReq() bool {
+func (p *BaseApiServiceFeedArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *BaseApiServiceDeleteNoteArgs) Read(iprot thrift.TProtocol) (err error) {
+func (p *BaseApiServiceFeedArgs) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -5784,7 +5784,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_BaseApiServiceDeleteNoteArgs[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_BaseApiServiceFeedArgs[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -5794,7 +5794,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *BaseApiServiceDeleteNoteArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *BaseApiServiceFeedArgs) ReadField1(iprot thrift.TProtocol) error {
 	p.Req = NewFeedRequest()
 	if err := p.Req.Read(iprot); err != nil {
 		return err
@@ -5802,9 +5802,9 @@ func (p *BaseApiServiceDeleteNoteArgs) ReadField1(iprot thrift.TProtocol) error 
 	return nil
 }
 
-func (p *BaseApiServiceDeleteNoteArgs) Write(oprot thrift.TProtocol) (err error) {
+func (p *BaseApiServiceFeedArgs) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("DeleteNote_args"); err != nil {
+	if err = oprot.WriteStructBegin("Feed_args"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -5831,7 +5831,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *BaseApiServiceDeleteNoteArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *BaseApiServiceFeedArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -5848,39 +5848,39 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *BaseApiServiceDeleteNoteArgs) String() string {
+func (p *BaseApiServiceFeedArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("BaseApiServiceDeleteNoteArgs(%+v)", *p)
+	return fmt.Sprintf("BaseApiServiceFeedArgs(%+v)", *p)
 }
 
-type BaseApiServiceDeleteNoteResult struct {
+type BaseApiServiceFeedResult struct {
 	Success *FeedResponse `thrift:"success,0,optional"`
 }
 
-func NewBaseApiServiceDeleteNoteResult() *BaseApiServiceDeleteNoteResult {
-	return &BaseApiServiceDeleteNoteResult{}
+func NewBaseApiServiceFeedResult() *BaseApiServiceFeedResult {
+	return &BaseApiServiceFeedResult{}
 }
 
-var BaseApiServiceDeleteNoteResult_Success_DEFAULT *FeedResponse
+var BaseApiServiceFeedResult_Success_DEFAULT *FeedResponse
 
-func (p *BaseApiServiceDeleteNoteResult) GetSuccess() (v *FeedResponse) {
+func (p *BaseApiServiceFeedResult) GetSuccess() (v *FeedResponse) {
 	if !p.IsSetSuccess() {
-		return BaseApiServiceDeleteNoteResult_Success_DEFAULT
+		return BaseApiServiceFeedResult_Success_DEFAULT
 	}
 	return p.Success
 }
 
-var fieldIDToName_BaseApiServiceDeleteNoteResult = map[int16]string{
+var fieldIDToName_BaseApiServiceFeedResult = map[int16]string{
 	0: "success",
 }
 
-func (p *BaseApiServiceDeleteNoteResult) IsSetSuccess() bool {
+func (p *BaseApiServiceFeedResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *BaseApiServiceDeleteNoteResult) Read(iprot thrift.TProtocol) (err error) {
+func (p *BaseApiServiceFeedResult) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -5929,7 +5929,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_BaseApiServiceDeleteNoteResult[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_BaseApiServiceFeedResult[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -5939,7 +5939,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *BaseApiServiceDeleteNoteResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *BaseApiServiceFeedResult) ReadField0(iprot thrift.TProtocol) error {
 	p.Success = NewFeedResponse()
 	if err := p.Success.Read(iprot); err != nil {
 		return err
@@ -5947,9 +5947,9 @@ func (p *BaseApiServiceDeleteNoteResult) ReadField0(iprot thrift.TProtocol) erro
 	return nil
 }
 
-func (p *BaseApiServiceDeleteNoteResult) Write(oprot thrift.TProtocol) (err error) {
+func (p *BaseApiServiceFeedResult) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("DeleteNote_result"); err != nil {
+	if err = oprot.WriteStructBegin("Feed_result"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -5976,7 +5976,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *BaseApiServiceDeleteNoteResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *BaseApiServiceFeedResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			goto WriteFieldBeginError
@@ -5995,9 +5995,9 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
 }
 
-func (p *BaseApiServiceDeleteNoteResult) String() string {
+func (p *BaseApiServiceFeedResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("BaseApiServiceDeleteNoteResult(%+v)", *p)
+	return fmt.Sprintf("BaseApiServiceFeedResult(%+v)", *p)
 }
