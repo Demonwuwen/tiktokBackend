@@ -1,0 +1,14 @@
+syntax = "proto2";
+option go_package = "../douyin.extra.first";
+package douyin.extra.first;
+
+message douyin_favorite_action_request {
+  required string token = 1; //用户鉴权token
+  required int64 video = 2; //视频id
+  required int32 action_type = 3; //
+}
+
+message douyin_favorite_action_response {
+  required int32  status_code = 1; //状态吗，0-成功，其他失败
+  optional  string status_msg = 2;//返回状态描述
+}

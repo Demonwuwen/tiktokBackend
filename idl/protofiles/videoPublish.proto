@@ -1,0 +1,15 @@
+syntax = "proto2";
+option go_package = "douyin.core";
+package douyin.core;
+
+message douyin_publis_action_request {
+  required string token = 1; //注册用户名，最长32个字符
+  required bytes data = 2; //视频数据
+  required string title = 3; //视频标题
+}
+
+message douyin_publish_action_response {
+  required int32  status_code = 1; //状态吗，0-成功，其他失败
+  optional  string status_msg = 2;//返回状态描述
+
+}
