@@ -1,4 +1,4 @@
-namespace go tiktokBackendBase
+namespace go video
 
 typedef i32 int32
 typedef i64 int64
