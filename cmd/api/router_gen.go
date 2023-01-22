@@ -3,7 +3,7 @@
 package main
 
 import (
-	"Demonwuwen/tiktokBackend/cmd/api/biz/router"
+	router "Demonwuwen/tiktokBackend/cmd/api/biz/router"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
