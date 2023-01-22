@@ -3,7 +3,7 @@
 package TiktokBackendBase
 
 import (
-	"Demonwuwen/tiktokBackend/cmd/api/biz/handler/tiktokBackendBase"
+	tiktokBackendBase "Demonwuwen/tiktokBackend/cmd/api/biz/handler/tiktokBackendBase"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -22,9 +22,29 @@ func Register(r *server.Hertz) {
 		_douyin.GET("/feed", append(_feedMw(), tiktokBackendBase.Feed)...)
 		_douyin.GET("/user", append(_usergetMw(), tiktokBackendBase.UserGet)...)
 		{
+			_comment := _douyin.Group("/comment", _commentMw()...)
+			_comment.POST("/action", append(_comment_ctMw(), tiktokBackendBase.CommentAct)...)
+			_comment.GET("/list", append(_commentlistMw(), tiktokBackendBase.CommentList)...)
+		}
+		{
+			_favorite := _douyin.Group("/favorite", _favoriteMw()...)
+			_favorite.POST("/action", append(_favorite_ctMw(), tiktokBackendBase.FavoriteAct)...)
+			_favorite.GET("/list", append(_favoritelistMw(), tiktokBackendBase.FavoriteList)...)
+		}
+		{
 			_publish := _douyin.Group("/publish", _publishMw()...)
 			_publish.POST("/action", append(_publishvideoMw(), tiktokBackendBase.PublishVideo)...)
 			_publish.GET("/list", append(_publishlistMw(), tiktokBackendBase.PublishList)...)
+		}
+		{
+			_relation := _douyin.Group("/relation", _relationMw()...)
+			_relation.POST("/action", append(_relation_ctMw(), tiktokBackendBase.RelationAct)...)
+			{
+				_follower := _relation.Group("/follower", _followerMw()...)
+				_follower.GET("/list", append(_fowllowlistMw(), tiktokBackendBase.FowllowList)...)
+				_follower.GET("/list", append(_fowllowerlistMw(), tiktokBackendBase.FowllowerList)...)
+				_follower.GET("/list", append(_frientlistMw(), tiktokBackendBase.FrientList)...)
+			}
 		}
 		{
 			_user := _douyin.Group("/user", _userMw()...)

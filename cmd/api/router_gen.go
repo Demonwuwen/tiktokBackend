@@ -3,8 +3,8 @@
 package main
 
 import (
+	"Demonwuwen/tiktokBackend/cmd/api/biz/router"
 	"github.com/cloudwego/hertz/pkg/app/server"
-	router "tiktokBackend/biz/router"
 )
 
 // register registers all routers.
