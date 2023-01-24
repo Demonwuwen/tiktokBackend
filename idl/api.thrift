@@ -213,7 +213,7 @@ service ApiService{
 
     //relation
      RelationActionResponse RelationAct(1:RelationActionRequest req) (api.post="/douyin/relation/action")
-     FollowListResponse FowllowList(1:FollowListRequest req) (api.get="/douyin/relation/follower/list")
+     FollowListResponse FowllowList(1:FollowListRequest req) (api.get="/douyin/relation/follow/list")
      FollowerListResponse FowllowerList(1:FollowerListRequest req) (api.get="/douyin/relation/follower/list")
-     FriendListResponse FrientList(1:FriendListRequest req) (api.get="/douyin/relation/follower/list")
+     FriendListResponse FrientList(1:FriendListRequest req) (api.get="/douyin/relation/friend/list")
 }

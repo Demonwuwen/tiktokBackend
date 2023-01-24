@@ -3,6 +3,14 @@ namespace go user
 typedef i32 int32
 typedef i64 int64
 
+enum ErrCode {
+    SuccessCode                = 0
+    ServiceErrCode             = 10001
+    ParamErrCode               = 10002
+    UserAlreadyExistErrCode    = 10003
+    AuthorizationFailedErrCode = 10004
+}
+
 struct User{
   1: required int64 id //用户id
   2: required string name // 用户名

@@ -3,9 +3,12 @@
 package tiktokBackend
 
 import (
+	"Demonwuwen/tiktokBackend/cmd/api/biz/model/tiktokapi"
+	"Demonwuwen/tiktokBackend/cmd/api/biz/mw"
+	"Demonwuwen/tiktokBackend/cmd/api/biz/rpc"
+	"Demonwuwen/tiktokBackend/kitex_gen/user"
+	"Demonwuwen/tiktokBackend/pkg/errno"
 	"context"
-
-	tiktokBackend "Demonwuwen/tiktokBackend/cmd/api/biz/model/tiktokBackend"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -14,46 +17,62 @@ import (
 // @router /douyin/user/register [POST]
 func UserRegister(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.UserRegisterRequest
+	var req tiktokapi.UserRegisterRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
+	userId, err := rpc.RegisterUser(ctx, &user.UserRegisterRequest{
+		Username: req.Username,
+		Password: req.Password,
+	})
 
-	resp := new(tiktokBackend.UserRegisterResponse)
+	if err != nil {
+		c.JSON(consts.StatusOK, &user.UserRegisterResponse{
+			StatusCode: errno.AuthorizationFailedErr.ErrCode,
+			StatusMsg:  &errno.AuthorizationFailedErr.ErrMsg,
+			UserId:     0,
+			Token:      "",
+		})
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	c.JSON(consts.StatusOK, &user.UserRegisterResponse{
+		StatusCode: errno.Success.ErrCode,
+		StatusMsg:  &errno.Success.ErrMsg,
+		UserId:     userId,
+		Token:      "",
+	})
 }
 
 // UserLogin .
 // @router /douyin/user/login [POST]
 func UserLogin(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.UserLoginRequest
+	var req tiktokapi.UserLoginRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokBackend.UserLoginResponse)
+	mw.JwtMiddleware.LoginHandler(ctx, c)
 
-	c.JSON(consts.StatusOK, resp)
 }
 
 // UserGet .
 // @router /douyin/user [GET]
 func UserGet(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.UserRequest
+	var req tiktokapi.UserRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokBackend.UserResponse)
+	resp := new(tiktokapi.UserResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -62,14 +81,14 @@ func UserGet(ctx context.Context, c *app.RequestContext) {
 // @router /douyin/publish/action [POST]
 func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.PublishActionRequest
+	var req tiktokapi.PublishActionRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokBackend.PublishActionResponse)
+	resp := new(tiktokapi.PublishActionResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -78,14 +97,14 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 // @router /douyin/publish/list [GET]
 func PublishList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.PublishListRequest
+	var req tiktokapi.PublishListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokBackend.PublishListResponse)
+	resp := new(tiktokapi.PublishListResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -94,14 +113,14 @@ func PublishList(ctx context.Context, c *app.RequestContext) {
 // @router /douyin/feed [GET]
 func Feed(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.FeedRequest
+	var req tiktokapi.FeedRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokBackend.FeedResponse)
+	resp := new(tiktokapi.FeedResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -110,14 +129,14 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 // @router /douyin/favorite/action [POST]
 func FavoriteAct(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.FavoriteActionRequest
+	var req tiktokapi.FavoriteActionRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokBackend.FavoriteActionResponse)
+	resp := new(tiktokapi.FavoriteActionResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -126,14 +145,14 @@ func FavoriteAct(ctx context.Context, c *app.RequestContext) {
 // @router /douyin/favorite/list [GET]
 func FavoriteList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.FavoriteListRequest
+	var req tiktokapi.FavoriteListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokBackend.FavoriteListResponse)
+	resp := new(tiktokapi.FavoriteListResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -142,14 +161,14 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 // @router /douyin/comment/action [POST]
 func CommentAct(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.CommentActionRequest
+	var req tiktokapi.CommentActionRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokBackend.CommentActionResponse)
+	resp := new(tiktokapi.CommentActionResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -158,14 +177,14 @@ func CommentAct(ctx context.Context, c *app.RequestContext) {
 // @router /douyin/comment/list [GET]
 func CommentList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.CommentListRequest
+	var req tiktokapi.CommentListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokBackend.CommentListResponse)
+	resp := new(tiktokapi.CommentListResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -174,30 +193,30 @@ func CommentList(ctx context.Context, c *app.RequestContext) {
 // @router /douyin/relation/action [POST]
 func RelationAct(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.RelationActionRequest
+	var req tiktokapi.RelationActionRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokBackend.RelationActionResponse)
+	resp := new(tiktokapi.RelationActionResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
 
 // FowllowList .
-// @router /douyin/relation/follower/list [GET]
+// @router /douyin/relation/follow/list [GET]
 func FowllowList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.FollowListRequest
+	var req tiktokapi.FollowListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokBackend.FollowListResponse)
+	resp := new(tiktokapi.FollowListResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -206,30 +225,30 @@ func FowllowList(ctx context.Context, c *app.RequestContext) {
 // @router /douyin/relation/follower/list [GET]
 func FowllowerList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.FollowerListRequest
+	var req tiktokapi.FollowerListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokBackend.FollowerListResponse)
+	resp := new(tiktokapi.FollowerListResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
 
 // FrientList .
-// @router /douyin/relation/follower/list [GET]
+// @router /douyin/relation/friend/list [GET]
 func FrientList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokBackend.FriendListRequest
+	var req tiktokapi.FriendListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokBackend.FriendListResponse)
+	resp := new(tiktokapi.FriendListResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
