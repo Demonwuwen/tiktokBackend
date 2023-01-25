@@ -14,7 +14,6 @@ import (
 	"context"
 	"crypto/rsa"
 	"errors"
-	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol"
@@ -552,6 +551,26 @@ func (mw *HertzJWTMiddleware) GetClaimsFromJWT(ctx context.Context, c *app.Reque
 	return claims, nil
 }
 
+func (mw *HertzJWTMiddleware) GenToken(ctx context.Context, userId int64) (string, error) {
+
+	// Create the token
+	token := jwt.New(jwt.GetSigningMethod(mw.SigningAlgorithm))
+	claims := token.Claims.(jwt.MapClaims)
+
+	if mw.PayloadFunc != nil {
+		for key, value := range mw.PayloadFunc(userId) {
+			claims[key] = value
+		}
+	}
+
+	expire := mw.TimeFunc().Add(mw.Timeout)
+	claims["exp"] = expire.Unix()
+	claims["orig_iat"] = mw.TimeFunc().Unix()
+
+	return mw.signedString(token)
+
+}
+
 // LoginHandler can be used by clients to get a jwt token.
 // Payload needs to be json in the form of {"username": "USERNAME", "password": "PASSWORD"}.
 // Reply will be of the form {"token": "TOKEN"}.
@@ -566,8 +585,6 @@ func (mw *HertzJWTMiddleware) LoginHandler(ctx context.Context, c *app.RequestCo
 		mw.unauthorized(ctx, c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(err, ctx, c))
 		return
 	}
-
-	fmt.Println("data = ", data)
 
 	// Create the token
 	token := jwt.New(jwt.GetSigningMethod(mw.SigningAlgorithm))
