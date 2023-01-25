@@ -49,18 +49,35 @@ func UserLogin(ctx context.Context, req *user.UserLoginRequest) (int64, error) {
 	}
 	if resp.StatusCode != 0 {
 		msg := resp.StatusMsg
-		return 0, errno.NewErrNo(resp.StatusCode, *msg)
+		return 0, errno.NewErrNo(resp.StatusCode, msg)
 	}
 
 	return resp.UserId, nil
 }
 
-func RegisterUser(ctx context.Context, req *user.UserRegisterRequest) (int64, error) {
-	_, err := userClient.UserRegister(ctx, req)
+func RegisterUser(ctx context.Context, req *user.UserRegisterRequest) (*user.UserRegisterResponse, error) {
+	resp, err := userClient.UserRegister(ctx, req)
 	if err != nil {
-		return 0, err
+		fmt.Println("register failed ")
+		//fmt.Println("resp = ", resp)
+		fmt.Println(resp.StatusMsg)
+		fmt.Println(resp.UserId)
+		fmt.Println(resp.Token)
+		return resp, err
 	}
 
 	fmt.Println("rpc Register")
-	return 1, nil
+	return resp, nil
+}
+
+func GetUser(ctx context.Context, req *user.UserRequest) (*user.UserResponse, error) {
+	resp, err := userClient.UserGet(ctx, req)
+	if err != nil {
+		fmt.Println("get user failed ")
+
+		return resp, err
+	}
+
+	fmt.Println("get user success")
+	return resp, nil
 }

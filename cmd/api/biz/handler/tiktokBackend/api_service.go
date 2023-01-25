@@ -3,14 +3,18 @@
 package tiktokBackend
 
 import (
+	tiktokBackend "Demonwuwen/tiktokBackend/cmd/api/biz/model/tiktokBackend"
 	"Demonwuwen/tiktokBackend/cmd/api/biz/model/tiktokapi"
 	"Demonwuwen/tiktokBackend/cmd/api/biz/mw"
 	"Demonwuwen/tiktokBackend/cmd/api/biz/rpc"
 	"Demonwuwen/tiktokBackend/kitex_gen/user"
 	"Demonwuwen/tiktokBackend/pkg/errno"
 	"context"
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"strconv"
 )
 
 // UserRegister .
@@ -23,27 +27,27 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-	userId, err := rpc.RegisterUser(ctx, &user.UserRegisterRequest{
+	resp, err := rpc.RegisterUser(ctx, &user.UserRegisterRequest{
 		Username: req.Username,
 		Password: req.Password,
 	})
-
 	if err != nil {
 		c.JSON(consts.StatusOK, &user.UserRegisterResponse{
 			StatusCode: errno.AuthorizationFailedErr.ErrCode,
-			StatusMsg:  &errno.AuthorizationFailedErr.ErrMsg,
+			StatusMsg:  errno.AuthorizationFailedErr.ErrMsg,
 			UserId:     0,
 			Token:      "",
 		})
 		return
 	}
 
-	c.JSON(consts.StatusOK, &user.UserRegisterResponse{
-		StatusCode: errno.Success.ErrCode,
-		StatusMsg:  &errno.Success.ErrMsg,
-		UserId:     userId,
-		Token:      "",
-	})
+	token, _, err := mw.JwtMiddleware.TokenGenerator(resp.UserId)
+	if err != nil {
+		fmt.Println("token generate failed ")
+		return
+	}
+	resp.Token = token
+	c.JSON(consts.StatusOK, &resp)
 }
 
 // UserLogin .
@@ -71,8 +75,21 @@ func UserGet(ctx context.Context, c *app.RequestContext) {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
+	userId, err := strconv.Atoi(c.Query("user_id"))
+	//userId := c.Query("user_id")
+	//token := c.Query("token")
 
-	resp := new(tiktokapi.UserResponse)
+	resp, err := rpc.GetUser(ctx, &user.UserRequest{
+		UserId: int64(userId),
+		//Token:  token,
+	})
+	if err != nil {
+		//err
+		c.JSON(consts.StatusOK, utils.H{
+			"err": err,
+		})
+	}
+	//resp := new(tiktokapi.UserResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -205,50 +222,50 @@ func RelationAct(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// FowllowList .
-// @router /douyin/relation/follow/list [GET]
-func FowllowList(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req tiktokapi.FollowListRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(tiktokapi.FollowListResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// FowllowerList .
-// @router /douyin/relation/follower/list [GET]
-func FowllowerList(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req tiktokapi.FollowerListRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(tiktokapi.FollowerListResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// FrientList .
+// FriendList .
 // @router /douyin/relation/friend/list [GET]
-func FrientList(ctx context.Context, c *app.RequestContext) {
+func FriendList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req tiktokapi.FriendListRequest
+	var req tiktokBackend.FriendListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(tiktokapi.FriendListResponse)
+	resp := new(tiktokBackend.FriendListResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// FollowList .
+// @router /douyin/relation/follow/list [GET]
+func FollowList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req tiktokBackend.FollowListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(tiktokBackend.FollowListResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// FollowerList .
+// @router /douyin/relation/follower/list [GET]
+func FollowerList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req tiktokBackend.FollowerListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(tiktokBackend.FollowerListResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }

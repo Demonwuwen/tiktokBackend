@@ -49,6 +49,7 @@ var (
 	ServiceErr             = NewErrNo(int32(user.ErrCode_ServiceErrCode), "Service is unable to start successfully")
 	ParamErr               = NewErrNo(int32(user.ErrCode_ParamErrCode), "Wrong Parameter has been given")
 	UserAlreadyExistErr    = NewErrNo(int32(user.ErrCode_UserAlreadyExistErrCode), "User already exists")
+	UserNotFoundErr        = NewErrNo(int32(user.ErrCode_UserAlreadyExistErrCode), "User Not Found ")
 	AuthorizationFailedErr = NewErrNo(int32(user.ErrCode_AuthorizationFailedErrCode), "Authorization failed")
 )
 

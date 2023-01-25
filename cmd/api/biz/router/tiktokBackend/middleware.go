@@ -3,6 +3,7 @@
 package TiktokBackend
 
 import (
+	"Demonwuwen/tiktokBackend/cmd/api/biz/mw"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -23,7 +24,10 @@ func _feedMw() []app.HandlerFunc {
 
 func _usergetMw() []app.HandlerFunc {
 	// your code...
-	return nil
+
+	return []app.HandlerFunc{
+		mw.JwtMiddleware.MiddlewareFunc(),
+	}
 }
 
 func _commentMw() []app.HandlerFunc {
@@ -86,21 +90,6 @@ func _followerMw() []app.HandlerFunc {
 	return nil
 }
 
-func _fowllowlistMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
-func _fowllowerlistMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
-func _frientlistMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
 func _userMw() []app.HandlerFunc {
 	// your code...
 	return nil
@@ -122,6 +111,21 @@ func _followMw() []app.HandlerFunc {
 }
 
 func _friendMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _friendlistMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _followlistMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _followerlistMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

@@ -41,15 +41,15 @@ func Register(r *server.Hertz) {
 			_relation.POST("/action", append(_relation_ctMw(), tiktokBackend.RelationAct)...)
 			{
 				_follow := _relation.Group("/follow", _followMw()...)
-				_follow.GET("/list", append(_fowllowlistMw(), tiktokBackend.FowllowList)...)
+				_follow.GET("/list", append(_followlistMw(), tiktokBackend.FollowList)...)
 			}
 			{
 				_follower := _relation.Group("/follower", _followerMw()...)
-				_follower.GET("/list", append(_fowllowerlistMw(), tiktokBackend.FowllowerList)...)
+				_follower.GET("/list", append(_followerlistMw(), tiktokBackend.FollowerList)...)
 			}
 			{
 				_friend := _relation.Group("/friend", _friendMw()...)
-				_friend.GET("/list", append(_frientlistMw(), tiktokBackend.FrientList)...)
+				_friend.GET("/list", append(_friendlistMw(), tiktokBackend.FriendList)...)
 			}
 		}
 		{

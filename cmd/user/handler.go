@@ -14,8 +14,7 @@ type UserServiceImpl struct{}
 
 // UserRegister implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.UserRegisterRequest) (resp *user.UserRegisterResponse, err error) {
-	// TODO: Your code here...
-	fmt.Println("userRegister ~~~~~")
+	resp, err = service.NewRegisterUserService(ctx).RegisterUser(req)
 	return
 }
 
@@ -24,7 +23,6 @@ func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.UserLoginRequ
 	resp = new(user.UserLoginResponse)
 	if err = req.IsValid(); err != nil {
 		//todo valid resp
-
 		return resp, nil
 	}
 
@@ -35,7 +33,7 @@ func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.UserLoginRequ
 
 	resp.UserId = uid
 	resp.StatusCode = consts.SuccessCode
-	resp.StatusMsg = &errno.Success.ErrMsg
+	resp.StatusMsg = errno.Success.ErrMsg
 	//fmt.Println("Uid = ", uid)
 	return resp, nil
 }
@@ -43,5 +41,10 @@ func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.UserLoginRequ
 // UserGet implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserGet(ctx context.Context, req *user.UserRequest) (resp *user.UserResponse, err error) {
 	// TODO: Your code here...
-	return
+	resp = &user.UserResponse{}
+	resp, err = service.NewGetUserService(ctx).GetUserById(req.UserId)
+	if err != nil {
+		fmt.Println("UserGet err :", err)
+	}
+	return resp, err
 }
