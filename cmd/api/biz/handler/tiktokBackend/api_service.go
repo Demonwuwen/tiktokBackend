@@ -14,12 +14,14 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"reflect"
 	"strconv"
 )
 
 // UserRegister .
 // @router /douyin/user/register [POST]
 func UserRegister(ctx context.Context, c *app.RequestContext) {
+	fmt.Println("router: in register flow~~~")
 	var err error
 	var req tiktokapi.UserRegisterRequest
 	err = c.BindAndValidate(&req)
@@ -41,11 +43,22 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	if resp.StatusCode != 0 {
+		c.JSON(consts.StatusOK, &resp)
+		return
+	}
+
+	fmt.Println("reflect.TypeOf(resp)", reflect.TypeOf(resp))
+	fmt.Println("reflect.TypeOf(resp.UserId)", reflect.TypeOf(resp.UserId))
+
 	token, _, err := mw.JwtMiddleware.TokenGenerator(resp.UserId)
 	if err != nil {
 		fmt.Println("token generate failed ")
 		return
 	}
+
+	fmt.Println("token generate success,token = ", token)
+
 	resp.Token = token
 	c.JSON(consts.StatusOK, &resp)
 }
@@ -53,6 +66,7 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 // UserLogin .
 // @router /douyin/user/login [POST]
 func UserLogin(ctx context.Context, c *app.RequestContext) {
+	fmt.Println("in login flow")
 	var err error
 	var req tiktokapi.UserLoginRequest
 	err = c.BindAndValidate(&req)

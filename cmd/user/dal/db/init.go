@@ -2,6 +2,7 @@ package db
 
 import (
 	"Demonwuwen/tiktokBackend/pkg/consts"
+	"fmt"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -33,7 +34,17 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
+	err = SyncDB()
+	if err != nil {
+		fmt.Println("AutoMigrate DB ERR :", err)
+		panic(err)
+	}
 	if err := DB.Use(tracing.NewPlugin()); err != nil {
 		panic(err)
 	}
+}
+
+func SyncDB() error {
+	err := DB.AutoMigrate(&User{}, &Video{}, &Comment{}, &UserLogin{})
+	return err
 }

@@ -59,10 +59,6 @@ func RegisterUser(ctx context.Context, req *user.UserRegisterRequest) (*user.Use
 	resp, err := userClient.UserRegister(ctx, req)
 	if err != nil {
 		fmt.Println("register failed ")
-		//fmt.Println("resp = ", resp)
-		fmt.Println(resp.StatusMsg)
-		fmt.Println(resp.UserId)
-		fmt.Println(resp.Token)
 		return resp, err
 	}
 
